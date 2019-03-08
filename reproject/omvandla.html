@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="proj4.js"></script>
+<script language="JavaScript">
+  function rensa(form) {
+    form.targetX.value = "";
+    form.targetY.value = "";
+  }
+  function transform(form) {
+    proj4.defs([
+	['WGS84', "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees"],
+ 	['SWEREF99TM',"+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"],
+	['RT90',"+proj=tmerc +lat_0=0 +lon_0=15.80827777777778 +k=1 +x_0=1500000 +y_0=0 +ellps=bessel +towgs84=414.1,41.3,603.1,-0.855,2.141,-7.023,0 +units=m +no_defs"],
+	['UTM32', "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs"],
+	['UTM33', "+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs"],
+	['UTM34', "+proj=utm +zone=34 +datum=WGS84 +units=m +no_defs"],
+	['UTM35', "+proj=utm +zone=35 +datum=WGS84 +units=m +no_defs"]
+ 
+    ]);
+    var source=form.sourceCRS.value;
+    var target=form.targetCRS.value;
+
+    var result = proj4(source, target, [form.sourceX.value, form.sourceY.value]);
+
+    form.targetX.value = result[0];
+    form.targetY.value = result[1];
+	
+	var g1_str = ""
+	
+	
+    var adress = "http://maps.google.com/maps?q=" + result[1] + "+" + result[0];
+//    alert(adress);  // visar dialogruta med google-adressen
+	open(adress);
+	
+
+  }
+
+</script>
+<style>
+  #formular {
+	border-radius: 25px;
+	width: 400px;
+	height: 250px;
+ 	padding: 20px;
+	margin: auto;
+	border:2px solid black;
+	text-align: center;
+	background-color: #eee;
+  }
+  body {
+	font-family: Arial;
+	font-size: 14pt;
+  }
+  #rubrik {
+	font-size: 20pt;
+	font-weight: bolder;
+	color: #004;
+  }
+  #mini {
+	font-size: 6pt;
+  }
+  
+</style>
+
+</head>
+<body>
+<div id="formular">
+<form>
+<span id="rubrik">Källkoordinater:</span><br>
+X/E:<input name="sourceX" type=text size=10 onclick="rensa(this.form)">&nbsp;
+Y/N:<input name="sourceY" type=text size=10 onclick="rensa(this.form)"><br><br>
+<select name="sourceCRS" onchange="rensa(this.form)">
+ <!-- <option value="WGS84">WGS84 (&deg;)</option>-->
+  <option value="SWEREF99TM">SWEREF 99TM</option>
+  <option value="RT90">RT90 2.5 V</option>
+ <!-- <option value="UTM32">UTM32 (WGS84)</option>
+  <option value="UTM33">UTM33 (WGS84)</option>
+  <option value="UTM34">UTM34 (WGS84)</option>
+  <option value="UTM35">UTM35 (WGS84)</option> -->
+</select>
+<small>-></small>
+<select name="targetCRS" onchange="rensa(this.form)">
+  <option value="WGS84">WGS84 (&deg;)</option>
+  <!--
+  <option value="SWEREF99TM" selected>SWEREF 99TM</option>
+  <option value="RT90">RT90 2.5 V</option>
+  <option value="UTM32">UTM32 (WGS84)</option>
+  <option value="UTM33">UTM33 (WGS84)</option>
+  <option value="UTM34">UTM34 (WGS84)</option>
+  <option value="UTM35">UTM35 (WGS84)</option> 
+  -->
+</select><br><br>
+<button type=button onclick="transform(this.form)">Omvandla</button><br><hr>
+<span id="rubrik">Målkoordinater:</span><br>
+X/E:<input name="targetX" type=text size=10> Y/N:<input name="targetY" type=text size=10><br>
+
+<span id="mini">coordinates in WGS 84</span>
+
+</form>
+</div>
+
+</body>
+</html>
